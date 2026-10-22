@@ -30,6 +30,12 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
     */
     @Override
     public List<Group> findConnectedGroups(int[][] image) {
+        validateArray(image);
+
+        return null;
+    }
+
+    private void validateArray(int[][] image) {
         if (image == null) throw new NullPointerException("Image array cannot be null!");
         for (int i = 0; i < image[0].length; i++) {
             if (image[i] == null) {
@@ -44,8 +50,6 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
                 }
             }
         }
-
-        return null;
     }
     
 }
