@@ -14,3 +14,32 @@
 
 - This class converts an RGB image into a 2D array, then runs through that array to connect white pixel groups together.
 
+## Coordinate
+
+- A record that keeps the x and y values of a certain point in an image. We will almost certainly need to use this!
+
+## Group
+
+- Another record that stores the number of pixels in it, as well as the Coordinate designated as that group's centroid.
+
+## BinaryGroupFinder
+
+- Interface for DfsBinaryGroupFinder.
+
+## ColorDistanceFinder
+
+- Interface for EuclideanColorDistance.
+
+## ImageBinarizer
+
+- Interface for DistanceImageBinarizer.
+
+## ImageGroupFinder
+
+- Interface for BinarizingImageGroupFinder.
+
+## ImageSummaryApp
+
+- Contains our main method. Command line takes in an image path, a target hex color, and an integer threshold for binarization. The method loads the image, parses the color values into integers, and binarizes by comparing each pixel's value to the target value. All values within the threshold of the target are marked as white; all others are black.
+
+- Next, it converts these values into a new PNG of black and white pixels. Then it finds clusters of white pixels, counted horizontally and vertically, not diagonally. The size of the groups and the centroid for each group are computed. Finally, it creates a new CSV file containing the coordinates and the size of each group.
