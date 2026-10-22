@@ -45,7 +45,7 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
 
         for (int row = 0; row < image.length; row++) {
             for (int column = 0; column < image[0].length; column++) {
-                if (image[column][row] != 0 || image[column][row] != 1) {
+                if (image[row][column] != 0 || image[row][column] != 1) {
                     throw new IllegalArgumentException("Image array contains non-binary integers!");
                 }
             }
