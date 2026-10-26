@@ -2,9 +2,15 @@
 
 - This class takes a binary rectangular array that represents an image. It is 0-indexed and returns a list of sorted groups. The size of the group is the number of pixels in that group. The centroid is the coordinates determining the center of that group. This should be determined using integer division!
 
+- Tracks visited pixels so each pixel is counted only once.
+- Checks that the array is rectangular and contains only 0s and 1s.
+
 ## EuclideanColorDistance
 
 - This class takes two hexadecimal values and finds the Euclidean distance between those two values. The form is 0xRRGGBB. A larger number means the values are far from each other; a smaller number means they are more similar.
+
+- Treats red, green, and blue as three separate dimensions.
+- Comparing a color with itself gives a distance of 0.
 
 ## DistanceImageBinarizer
 
@@ -18,13 +24,19 @@
 
 - A record that keeps the x and y values of a certain point in an image. We will almost certainly need to use this!
 
+- The x value represents the column, and y represents the row.
+- Record values cannot be changed after creation.
+
 ## Group
 
 - Another record that stores the number of pixels in it, as well as the Coordinate designated as that group's centroid.
+- - to Cs v Row formats the group as size,x,y.
 
 ## BinaryGroupFinder
 
 - Interface for DfsBinaryGroupFinder.
+- Declares a method that accepts an int[][].
+- Requires implementations to return groups in descending order.
 
 ## ColorDistanceFinder
 
