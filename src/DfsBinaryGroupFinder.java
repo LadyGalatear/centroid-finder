@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class DfsBinaryGroupFinder implements BinaryGroupFinder {
@@ -31,8 +32,66 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
     @Override
     public List<Group> findConnectedGroups(int[][] image) {
         validateArray(image);
+        boolean[][] visited = new boolean[image.length][image[0].length];
+        int[] start = {0, 0};
+
+        findConnectedGroups(image, visited, start);
 
         return null;
+    }
+
+    private List<int[]> findConnectedGroups(int[][] image, boolean[][] visited, int[] current) {
+        int curRow = current[0];
+        int curColumn = current[1];
+
+        if (visited[curRow][curColumn]) return null;
+        visited[curRow][curColumn] = true;
+
+        List<int[]> neighbors = possibleGroups(image, current);
+        for (int[] neighbor : neighbors) {
+            if (!visited[neighbor[0]][neighbor[1]]) {
+                
+            }
+        }
+        return null;
+    }
+
+    private List<int[]> possibleGroups(int[][] image, int[] current) {
+        int curRow = current[0];
+        int curColumn = current[1];
+
+        int newRow, newColumn;
+        List<int[]> possible = new ArrayList<>();
+
+        newRow = curRow - 1;
+        newColumn = curColumn;
+
+        if (newRow >= 0 && image[newRow][newColumn] == 1) {
+            possible.add(new int[]{newRow, newColumn});
+        }
+
+        newRow = curRow + 1;
+        newColumn = curColumn;
+
+        if (newRow < image.length && image[newRow][newColumn] == 1) {
+            possible.add(new int[]{newRow, newColumn});
+        }
+
+        newRow = curRow;
+        newColumn = curColumn - 1;
+
+        if (newRow >= 0 && image[newRow][newColumn] == 1) {
+            possible.add(new int[]{newRow, newColumn});
+        }
+
+        newRow = curRow;
+        newColumn = curColumn + 1;
+
+        if (newRow < image[newRow].length && image[newRow][newColumn] == 1) {
+            possible.add(new int[]{newRow, newColumn});
+        }
+
+        return possible;
     }
 
     private void validateArray(int[][] image) {
