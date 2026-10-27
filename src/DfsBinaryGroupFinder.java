@@ -37,15 +37,22 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
 
     private void validateArray(int[][] image) {
         if (image == null) throw new NullPointerException("Image array cannot be null!");
-        for (int i = 0; i < image[0].length; i++) {
+        if (image.length == 0) throw new IllegalArgumentException("Image array cannot be empty!");
+        if (image[0] == null) throw new NullPointerException("Image subarray 0 reads as null!");
+        if (image[0].length == 0) throw new IllegalArgumentException("Image subarray cannot be empty!");
+        for (int i = 1; i < image.length; i++) {
             if (image[i] == null) {
                 throw new NullPointerException("Image subarray " + i + " reads as null!");
+            }
+
+            if (image[i].length != image[0].length) {
+                throw new IllegalArgumentException("Image array is not rectangular!");
             }
         }
 
         for (int row = 0; row < image.length; row++) {
             for (int column = 0; column < image[0].length; column++) {
-                if (image[row][column] != 0 || image[row][column] != 1) {
+                if (image[row][column] != 0 && image[row][column] != 1) {
                     throw new IllegalArgumentException("Image array contains non-binary integers!");
                 }
             }
