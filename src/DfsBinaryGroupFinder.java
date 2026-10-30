@@ -31,17 +31,6 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
     * @return the found groups of connected pixels in descending order
     */
 
-   public static void main(String[] args) {
-        int[][] image = {
-    {1, 1, 0},
-    {0, 0, 0},
-    {1, 1, 0}
-};
-
-        DfsBinaryGroupFinder finder = new DfsBinaryGroupFinder();
-        System.out.println(finder.findConnectedGroups(image));
-   }
-
     @Override
     public List<Group> findConnectedGroups(int[][] image) {
         validateArray(image);
