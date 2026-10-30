@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DfsBinaryGroupFinder implements BinaryGroupFinder {
@@ -29,34 +30,62 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
     * @param image a rectangular 2D array containing only 1s and 0s
     * @return the found groups of connected pixels in descending order
     */
+
+   public static void main(String[] args) {
+        int[][] image = {
+    {1, 1, 0},
+    {0, 0, 0},
+    {1, 1, 0}
+};
+
+        DfsBinaryGroupFinder finder = new DfsBinaryGroupFinder();
+        System.out.println(finder.findConnectedGroups(image));
+   }
+
     @Override
     public List<Group> findConnectedGroups(int[][] image) {
         validateArray(image);
+        List<Group> groups = new ArrayList<>();
         boolean[][] visited = new boolean[image.length][image[0].length];
-        int[] start = {0, 0};
+        
+        for (int row = 0; row < image.length; row++) {
+            for (int column = 0; column < image[0].length; column++) {
+                if (image[row][column] == 1 && !visited[row][column]) {
+                    int[] start = {row, column};
+                    GroupStats stats = new GroupStats();
+                    findConnectedGroups(image, visited, start, stats);
+                    int centroidX = stats.columnSum / stats.count;
+                    int centroidY = stats.rowSum / stats.count;
+                    Coordinate centroid = new Coordinate(centroidX, centroidY);
+                    Group group = new Group(stats.count, centroid);
+                    groups.add(group);
+                }
+            }
+        }
 
-        findConnectedGroups(image, visited, start);
-
-        return null;
+        groups.sort(Collections.reverseOrder());
+        return groups;
     }
 
-    private List<int[]> findConnectedGroups(int[][] image, boolean[][] visited, int[] current) {
+    private void findConnectedGroups(int[][] image, boolean[][] visited, int[] current, GroupStats stats) {
         int curRow = current[0];
         int curColumn = current[1];
 
-        if (visited[curRow][curColumn]) return null;
+        if (visited[curRow][curColumn]) return;
         visited[curRow][curColumn] = true;
+        stats.count++;
+        stats.rowSum += curRow;
+        stats.columnSum += curColumn;
 
-        List<int[]> neighbors = possibleGroups(image, current);
+        List<int[]> neighbors = getNeighbors(image, current);
         for (int[] neighbor : neighbors) {
             if (!visited[neighbor[0]][neighbor[1]]) {
-                
+                findConnectedGroups(image, visited, neighbor, stats);
             }
         }
-        return null;
     }
 
-    private List<int[]> possibleGroups(int[][] image, int[] current) {
+    private List<int[]> getNeighbors(int[][] image, int[] current) {
         int curRow = current[0];
         int curColumn = current[1];
 
@@ -80,18 +109,24 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
         newRow = curRow;
         newColumn = curColumn - 1;
 
-        if (newRow >= 0 && image[newRow][newColumn] == 1) {
+        if (newColumn >= 0 && image[newRow][newColumn] == 1) {
             possible.add(new int[]{newRow, newColumn});
         }
 
         newRow = curRow;
         newColumn = curColumn + 1;
 
-        if (newRow < image[newRow].length && image[newRow][newColumn] == 1) {
+        if (newColumn < image[newRow].length && image[newRow][newColumn] == 1) {
             possible.add(new int[]{newRow, newColumn});
         }
 
         return possible;
+    }
+
+    private static class GroupStats {
+        int count = 0;
+        int rowSum = 0;
+        int columnSum = 0;
     }
 
     private void validateArray(int[][] image) {
@@ -117,5 +152,4 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
             }
         }
     }
-    
 }
