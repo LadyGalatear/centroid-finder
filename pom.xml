@@ -13,6 +13,7 @@
     <properties>
         <maven.compiler.release>27</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+            <exec.mainClass>ImageSummaryApp</exec.mainClass>
     </properties>
 
     <dependencies>
@@ -50,6 +51,7 @@
                 <version>3.6.4</version>
                 <configuration>
                     <mainClass>ImageSummaryApp</mainClass>
+                        <mainClass>${exec.mainClass}</mainClass>
                 </configuration>
             </plugin>
         </plugins>
