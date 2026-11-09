@@ -72,3 +72,10 @@ If you want to, you can make a new branch to start experimenting. See if you can
 ## video
 
 The video branch will test extracting one frame per second.
+
+### Video Part I
+
+I started by creating the `video` branch and moving the Java files and tests into separate Maven folders. My partner set up `pom.xml` and wrote the first part of the video experiment to read the length of the clip.
+
+I compared three libraries in `options.md` and tried JCodec. It worked with our five-second MP4 and saved five images, one for each second. I also ran the original image app to make sure it still worked, and all 36 tests passed.
+
