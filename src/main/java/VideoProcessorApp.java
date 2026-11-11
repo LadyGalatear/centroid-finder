@@ -7,8 +7,7 @@ public class VideoProcessorApp {
     public static void main(String[] args) {
         if (args.length != 4) {
             System.err.println(
-                "Usage: java -jar videoprocessor.jar <inputPath> <outputCsv> <targetColor> <threshold>"
-            );
+                    "Usage: java -jar videoprocessor.jar <inputPath> <outputCsv> <targetColor> <threshold>");
 
             return;
         }
@@ -41,22 +40,18 @@ public class VideoProcessorApp {
         ImageGroupFinder groupFinder = new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
 
         VideoCentroidProcessor processor = new VideoCentroidProcessor(groupFinder);
-        
-        try (VideoFrameReader reader = new VideoFrameReader(Path.of(inputPath)); 
-            CentroidCsvWriter csvWriter = new CentroidCsvWriter(outputCsv)) {
-                VideoFrameReader.VideoFrame frame;
-                double nextSampleTime = 0.0;
 
-                while ((frame = reader.readNext()) != null) {
-                    if (frame.seconds() < nextSampleTime) continue;
-                    nextSampleTime += 1.0;
-                    VideoCentroidProcessor.Result result = processor.process(frame);
-                    csvWriter.writeResult(result);
-                }
+        try (VideoFrameReader reader = new VideoFrameReader(Path.of(inputPath));
+                CentroidCsvWriter csvWriter = new CentroidCsvWriter(outputCsv)) {
+            VideoFrameReader.VideoFrame frame;
+
+            while ((frame = reader.readNext()) != null) {
+                VideoCentroidProcessor.Result result = processor.process(frame);
+                csvWriter.writeResult(result);
+            }
         } catch (IOException | JCodecException e) {
             System.err.println("Error processing video: " +
-                e.getMessage()
-            );
+                    e.getMessage());
             return;
         }
     }
