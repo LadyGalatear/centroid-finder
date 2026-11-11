@@ -30,4 +30,4 @@ I can handle the command line and CSV writing. If you want to handle the frames 
 
 ## Testing
 
-I ran the JAR on the salamander video with FFA200 as the target color and 164 as the threshold. It saved 633 rows to the CSV. I checked a few rows from the beginning, middle, and near the end, and the coordinates stayed close together. At about 13 seconds, the program gave me (416, 364). I still need to check whether that point is on the salamander.
+I first ran the JAR on the salamander video with FFA200 and a threshold of 164. When I checked the frame at about 13 seconds, the marker landed on the background. I tried a darker red (650000) with a threshold of 40. That run produced 11,477 CSV rows, which matched the video’s frame count. In one frame I checked with the new settings, the marker landed just below the curve of the salamander’s body.
