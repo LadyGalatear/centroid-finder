@@ -8,7 +8,7 @@ test("thumbnail route returns a JPEG for an existing video", async () => {
   try {
     const port = server.address().port;
     const response = await fetch(
-      `http://localhost:${port}/api/videos/sample.mp4/thumbnail`
+      `http://localhost:${port}/thumbnail/sample.mp4`
     );
 
     assert.equal(response.status, 200);
@@ -30,7 +30,7 @@ test("thumbnail route returns 404 for a missing video", async () => {
   try {
     const port = server.address().port;
     const response = await fetch(
-      `http://localhost:${port}/api/videos/nonexistent.mp4/thumbnail`
+      `http://localhost:${port}/thumbnail/nonexistent.mp4`
     );
 
     assert.equal(response.status, 404);
