@@ -25,3 +25,5 @@ replay_pid*
 
 target/
 /server/node_modules/
+/server/jobs/
+/server/results/

@@ -15,6 +15,7 @@ require("dotenv").config({
 });
 
 const app = express();
+app.use(require("./processingRoutes"));
 const port = process.env.PORT || 3000;
 
 const videosDirectory = path.resolve(
