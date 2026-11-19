@@ -2,6 +2,12 @@ const express = require("express");
 const path = require("node:path");
 const fs = require("node:fs/promises");
 
+const ffmpegPath = require("ffmpeg-static");
+const { execFile } = require("node:child_process");
+const { promisify } = require("node:util");
+
+const execFileAsync = promisify(execFile);
+
 const projectRoot = path.resolve(__dirname, "..");
 
 require("dotenv").config({
@@ -49,8 +55,69 @@ app.get("/api/videos", async (req, res) => {
   }
 });
 
+app.get("/api/videos/:filename/thumbnail", async (req, res) => {
+  const filename = req.params.filename;
+
+  if (
+    filename === "." || 
+    filename === ".." || 
+    filename.includes("/") || 
+    filename.includes("\\")
+  ) {
+    return res.status(400).json({ error: "Invalid filename"});
+  }
+
+  const videoPath = path.join(videosDirectory, filename);
+
+  try {
+    const stats = await fs.stat(videoPath);
+
+    if (!stats.isFile()) {
+      return res.status(404).json({ error: "Video not found"});
+    }
+  } catch {
+    return res.status(404).json({ error: "Video not found"});
+  }
+
+  try {
+    const { stdout } = await execFileAsync(
+      ffmpegPath, 
+      [
+        "-loglevel", "error", 
+        "-ss", "1", 
+        "-i", videoPath, 
+        "-frames:v", "1", 
+        "-f", "image2pipe", 
+        "-vcodec", "mjpeg", 
+        "pipe:1"
+      ], 
+      {
+        encoding: "buffer", 
+        maxBuffer: 10 * 1024 * 1024
+      }
+    );
+
+    if (!stdout.length) {
+      return res.status(500).json({ 
+        error: "Could not generate thumbnail"
+      });
+    }
+
+    res.type("jpeg").send(stdout);
+  } catch (error) {
+    console.error("Thumbnail generation failed:", error);
+    res.status(500).json({ 
+      error: "Could not generate thumbnail"
+    });
+  }
+})
+
 app.use("/videos", express.static(videosDirectory));
 
-app.listen(port, () => {
-  console.log(`Server listening on http://localhost:${port}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server listening on http://localhost:${port}`);
+  });
+}
+
+module.exports = app;
