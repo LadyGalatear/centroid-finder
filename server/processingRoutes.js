@@ -23,6 +23,9 @@ const resultsDirectory = path.resolve(
   process.env.RESULTS_DIR || "server/results"
 );
 
+const jobIdPattern =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 router.post("/process/:filename", async (req, res) => {
   const filename = req.params.filename;
   const { targetColor, threshold } = req.query;
@@ -71,6 +74,7 @@ router.post("/process/:filename", async (req, res) => {
       return res.status(404).json({ error: "Video not found" });
     }
 
+    console.error(error);
     return res.status(500).json({ error: "Error starting job" });
   }
 
@@ -102,7 +106,10 @@ router.post("/process/:filename", async (req, res) => {
       const worker = spawn(
         process.execPath,
         [path.join(__dirname, "processJob.js"), jobPath],
-        { detached: true, stdio: "ignore" }
+        {
+          detached: true,
+          stdio: "ignore",
+        }
       );
 
       await once(worker, "spawn");
@@ -116,6 +123,75 @@ router.post("/process/:filename", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error starting job" });
+  }
+});
+
+router.get("/process/:jobId/status", async (req, res) => {
+  const jobId = req.params.jobId;
+
+  if (!jobIdPattern.test(jobId)) {
+    return res.status(404).json({ error: "Job ID not found" });
+  }
+
+  try {
+    const jobPath = path.join(jobsDirectory, `${jobId}.json`);
+    const job = JSON.parse(await fs.readFile(jobPath, "utf8"));
+
+    if (job.status === "done") {
+      return res.json({
+        status: "done",
+        result: job.result,
+      });
+    }
+
+    if (job.status === "error") {
+      return res.json({
+        status: "error",
+        error: job.error,
+      });
+    }
+
+    res.json({ status: "processing" });
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return res.status(404).json({ error: "Job ID not found" });
+    }
+
+    console.error(error);
+    res.status(500).json({ error: "Error fetching job status" });
+  }
+});
+
+router.get("/results/:filename", async (req, res) => {
+  const filename = req.params.filename;
+  const jobId = filename.slice(0, -4);
+
+  if (!filename.endsWith(".csv") || !jobIdPattern.test(jobId)) {
+    return res.status(404).json({ error: "Result not found" });
+  }
+
+  try {
+    const jobPath = path.join(jobsDirectory, `${jobId}.json`);
+    const job = JSON.parse(await fs.readFile(jobPath, "utf8"));
+
+    if (job.status !== "done") {
+      return res.status(404).json({ error: "Result is not ready" });
+    }
+
+    const csvPath = path.join(resultsDirectory, filename);
+
+    res.download(csvPath, filename, (error) => {
+      if (error && !res.headersSent) {
+        res.status(500).json({ error: "Error downloading result" });
+      }
+    });
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return res.status(404).json({ error: "Result not found" });
+    }
+
+    console.error(error);
+    res.status(500).json({ error: "Error downloading result" });
   }
 });
 
