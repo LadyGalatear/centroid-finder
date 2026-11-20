@@ -17,11 +17,13 @@ flowchart TD
 
 ## How I’d test it
 
-- In Postman, start a job for `sample.mp4` and 
-check that it returns `202` with a job ID. Use that ID to check the status,
- then open the CSV link when the job is done.
+- In Postman, start a job for `sample.mp4` and
+  check that it returns `202` with a job ID. Use that ID to check the status,
+  then open the CSV link when the job is done.
 
-## Testing
+## Job storage
+
+We save each job’s status in a JSON file so we can check it after restarting the server.
 
 ## Testing
 
