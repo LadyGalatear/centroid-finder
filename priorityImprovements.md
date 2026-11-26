@@ -13,3 +13,10 @@ Java should return a failure exit code when video processing fails. The thumbnai
 ## Documentation
 
 The readme needs updates so the setup and testing commands match the project. Explaining api requests responses and errors with examples is listed too.
+
+
+## Other Possible Improvements ( just optional if we can...)
+
+Reusing thumbnails might help avoid running FFmpeg over again when the video has not changed. It seems like limiting the number of videos processed at the same time could cut down on memory use too. I think a failed video job should not get marked as complete if there is just a partial CSV file there. 
+
+ImageSummaryApp needs to deal with cases where ImageIO.read gives back null. The Java release listed in pom.xml ought to match the JDK that is actually being used for the project. Maybe using TempDir in the CSV writer tests would make cleaning up temporary files more reliable. Some of these changes feel like they would be quick to add
