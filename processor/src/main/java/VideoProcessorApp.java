@@ -5,11 +5,14 @@ import org.jcodec.api.JCodecException;
 
 public class VideoProcessorApp {
     public static void main(String[] args) {
+        System.exit(run(args));
+    }
+
+    public static int run(String[] args) {
         if (args.length != 4) {
             System.err.println(
                     "Usage: java -jar videoprocessor.jar <inputPath> <outputCsv> <targetColor> <threshold>");
-
-            return;
+            return 1;
         }
 
         String inputPath = args[0];
@@ -23,7 +26,7 @@ public class VideoProcessorApp {
             threshold = Integer.parseInt(thresholdText);
         } catch (NumberFormatException e) {
             System.err.println("Threshold must be an integer.");
-            return;
+            return 1;
         }
 
         int targetColor;
@@ -32,12 +35,14 @@ public class VideoProcessorApp {
             targetColor = Integer.parseInt(hexTargetColor, 16);
         } catch (NumberFormatException e) {
             System.err.println("Target color must be a valid hexadecimal number.");
-            return;
+            return 1;
         }
 
         ColorDistanceFinder distanceFinder = new EuclideanColorDistance();
-        ImageBinarizer binarizer = new DistanceImageBinarizer(distanceFinder, targetColor, threshold);
-        ImageGroupFinder groupFinder = new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
+        ImageBinarizer binarizer =
+                new DistanceImageBinarizer(distanceFinder, targetColor, threshold);
+        ImageGroupFinder groupFinder =
+                new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
 
         VideoCentroidProcessor processor = new VideoCentroidProcessor(groupFinder);
 
@@ -50,9 +55,10 @@ public class VideoProcessorApp {
                 csvWriter.writeResult(result);
             }
         } catch (IOException | JCodecException e) {
-            System.err.println("Error processing video: " +
-                    e.getMessage());
-            return;
+            System.err.println("Error processing video: " + e.getMessage());
+            return 1;
         }
+
+        return 0;
     }
 }
