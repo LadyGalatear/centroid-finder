@@ -110,3 +110,55 @@ test("keeps an unfinished CSV unavailable", async () => {
     error: "Result is not ready",
   });
 });
+  for (const color of ["fff", "gggggg", "1234567"]) {
+    test(`rejects invalid target color: ${color}`, async () => {
+      const settings = new URLSearchParams({
+        targetColor: color,
+        threshold: "164",
+      });
+  
+      const response = await fetch(
+        `${baseUrl}/process/sample.mp4?${settings}`,
+        { method: "POST" }
+      );
+  
+      assert.equal(response.status, 400);
+      assert.deepEqual(await response.json(), {
+        error: "Use a six-digit hex color and a non-negative integer threshold.",
+      });
+    });
+  }
+  
+  for (const threshold of ["-1", "1.5", "abc"]) {
+    test(`rejects invalid threshold: ${threshold}`, async () => {
+      const settings = new URLSearchParams({
+        targetColor: "ffa200",
+        threshold,
+      });
+  
+      const response = await fetch(
+        `${baseUrl}/process/sample.mp4?${settings}`,
+        { method: "POST" }
+      );
+  
+      assert.equal(response.status, 400);
+      assert.deepEqual(await response.json(), {
+        error: "Use a six-digit hex color and a non-negative integer threshold.",
+      });
+    });
+  }
+  
+  test("returns 400 for a filename containing a backslash", async () => {
+    const filename = encodeURIComponent("bad\\name.mp4");
+  
+    const response = await fetch(
+      `${baseUrl}/process/${filename}?targetColor=ffa200&threshold=164`,
+      { method: "POST" }
+    );
+  
+    assert.equal(response.status, 400);
+    assert.deepEqual(await response.json(), {
+      error: "Invalid filename",
+    });
+  
+});
