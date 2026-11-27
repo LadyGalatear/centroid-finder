@@ -67,8 +67,13 @@ router.get("/thumbnail/:filename", async (req, res) => {
     if (!stats.isFile()) {
       return res.status(404).json({ error: "Video not found" });
     }
-  } catch {
-    return res.status(404).json({ error: "Video not found" });
+  } catch (error) {
+    if (error.code === "ENOENT" || error.code === "ENOTDIR") {
+      return res.status(404).json({ error: "Video not found" });
+    }
+
+    console.error("Error checking video file:", error);
+    return res.status(500).json({ error: "Error reading video file" });
   }
 
   try {
