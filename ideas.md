@@ -1,9 +1,9 @@
-# Project Ideas
+# Project Ideas ×̷̷͜×̷
 
 I really like anime, particularly Black Clover, and I want to make something that reflects the power and potential of its spell casting and magical books.
 
 - Video tracking will be done for both hands in real time.
--  Draw half of a magic circle with each hand.
+- Draw half of a magic circle with each hand.
 - Backend processing will be implemented in order to analyze the completion rate of these circles.
 - Spellbook will open if the magic circle is completed in a proper way.
 - Other shapes should be included as options to draw, such as triangles and spirals.
